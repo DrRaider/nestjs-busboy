@@ -1,0 +1,20 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      nestjs:
+        patterns:
+          - "@nestjs/*"
+      dev-dependencies:
+        dependency-type: development
+        exclude-patterns:
+          - "@nestjs/*"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
