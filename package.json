@@ -89,7 +89,7 @@
     "@types/jest": "^29.5.0",
     "@types/node": "^20.0.0",
     "jest": "^29.7.0",
-    "lefthook": "^1.11.0",
+    "lefthook": "^2.1.4",
     "pactum": "^3.7.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
