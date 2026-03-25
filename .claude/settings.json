@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install:*)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(pnpm biome:*)",
+      "Bash(pnpm tsc:*)",
+      "WebFetch(domain:docs.github.com)",
+      "Bash(grep -E \"^[^/]+$|\\\\.eslintrc|nx\\\\.json|pnpm-workspace\")",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm test:*)"
+    ]
+  }
+}
