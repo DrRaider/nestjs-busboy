@@ -1,6 +1,6 @@
 {
   "name": "nestjs-busboy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A File Upload package for NestJS supporting both Fastify and Express adapters",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
