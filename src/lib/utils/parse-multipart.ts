@@ -14,9 +14,10 @@ export interface ParseConstraints {
 }
 
 export function getStream(req: any): Readable {
-  // Fastify: our content-type parser stores the raw payload as req.body
-  if (req.body != null && typeof (req.body as any).pipe === "function") {
-    return req.body as Readable;
+  // Fastify: our content-type parser stores the raw payload on req.rawMultipartStream
+  // to avoid polluting req.body with a stream that has circular references.
+  if (req.rawMultipartStream != null && typeof req.rawMultipartStream.pipe === "function") {
+    return req.rawMultipartStream as Readable;
   }
   // Express: req IS the IncomingMessage stream
   // Fastify (no parser registered): req.raw is the IncomingMessage
@@ -50,6 +51,10 @@ export function parseMultipart(
     const body: Record<string, string | string[]> = {};
     const pending: Promise<void>[] = [];
     let firstError: Error | null = null;
+
+    // Populate req.body incrementally so that destination/filename callbacks
+    // in DiskStorage can access fields that were parsed before the file part.
+    req.body = body;
 
     // @fastify/busboy file event: (fieldname, stream, filename, encoding, mimeType)
     bb.on(
