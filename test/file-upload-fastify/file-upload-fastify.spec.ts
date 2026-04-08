@@ -1,3 +1,5 @@
+import { rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { INestApplication } from "@nestjs/common";
 import { FastifyAdapter } from "@nestjs/platform-fastify";
@@ -77,6 +79,27 @@ describe("Busboy File Upload - Fastify", () => {
       .withFile("avatar", join(process.cwd(), "package.json"))
       .expectStatus(201)
       .expectBody({ success: true, fileCount: 2 })
+      .toss();
+  });
+
+  it("DiskStorage destination callback can read form fields from req.body", async () => {
+    const folder = "test-dest-from-field";
+    await spec()
+      .post("/dest-from-field")
+      .withMultiPartFormData("folder", folder)
+      .withFile("file", join(process.cwd(), "package.json"))
+      .expectStatus(201)
+      .expectJsonMatch({ destination: join(tmpdir(), folder) })
+      .toss();
+    await rm(join(tmpdir(), folder), { recursive: true, force: true });
+  });
+
+  it("Global interceptor can serialize req.body without circular reference error", async () => {
+    await spec()
+      .post("/intercept")
+      .withFile("file", join(process.cwd(), "package.json"))
+      .expectStatus(201)
+      .expectBody({ success: true })
       .toss();
   });
 

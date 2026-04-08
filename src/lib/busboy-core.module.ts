@@ -15,12 +15,14 @@ export class BusboyCoreModule implements OnApplicationBootstrap {
       // Register a regex-based content-type parser to handle multipart/form-data
       // including the boundary parameter (e.g. "multipart/form-data; boundary=xxxx").
       // This prevents Fastify v5's FST_ERR_CTP_INVALID_MEDIA_TYPE error.
-      // The raw payload stream is stored as req.body so interceptors can pipe it.
+      // The raw payload stream is stored on req.rawMultipartStream so that
+      // global interceptors reading req.body are not affected by circular references.
       if (!instance.hasContentTypeParser("multipart/form-data")) {
         instance.addContentTypeParser(
           /^multipart\/form-data/,
-          (_req: unknown, payload: unknown, done: (err: Error | null, body?: unknown) => void) => {
-            done(null, payload);
+          (req: any, payload: unknown, done: (err: Error | null, body?: unknown) => void) => {
+            req.rawMultipartStream = payload;
+            done(null, undefined);
           },
         );
       }
