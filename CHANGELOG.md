@@ -1,5 +1,11 @@
 # nestjs-busboy
 
+## 1.0.2
+
+### Patch Changes
+
+- 63a268c: Update dependency dependabot/fetch-metadata to 3
+
 ## 1.0.1
 
 ### Patch Changes
