@@ -1,6 +1,6 @@
 name: Dependabot Changeset
 
-on: pull_request
+on: pull_request_target
 
 permissions:
   contents: write
@@ -10,11 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]'
     steps:
+      # pull_request_target runs with write permissions; this checkout is safe
+      # because we only create a new file — no PR code is executed.
+      # The `if: github.actor == 'dependabot[bot]'` job guard ensures only
+      # Dependabot PRs trigger this workflow.
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
-      - uses: dependabot/fetch-metadata@v3
+      - uses: dependabot/fetch-metadata@v2
         id: metadata
 
       - name: Create changeset for production dependency updates
