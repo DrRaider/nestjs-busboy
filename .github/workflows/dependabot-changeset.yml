@@ -8,12 +8,12 @@ permissions:
 jobs:
   changeset:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    # Keyed on the PR author, not the triggering actor: a push to a Dependabot
+    # branch by anyone else must not change whether this job runs.
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       # pull_request_target runs with write permissions; this checkout is safe
       # because we only create a new file — no PR code is executed.
-      # The `if: github.actor == 'dependabot[bot]'` job guard ensures only
-      # Dependabot PRs trigger this workflow.
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
@@ -21,8 +21,15 @@ jobs:
       - uses: dependabot/fetch-metadata@v2
         id: metadata
 
+      # npm production deps only. github-actions updates also report
+      # `direct:production`, but they don't change the published package, so a
+      # changeset for them is meaningless — and the commit below would push the
+      # PR head past its CI run (GITHUB_TOKEN pushes never trigger workflows),
+      # leaving the required `check` missing and the PR blocked forever.
       - name: Create changeset for production dependency updates
-        if: steps.metadata.outputs.dependency-type == 'direct:production'
+        if: >-
+          steps.metadata.outputs.package-ecosystem == 'npm_and_yarn' &&
+          steps.metadata.outputs.dependency-type == 'direct:production'
         run: |
           cat > ".changeset/dependabot-$(date +%s).md" << 'EOF'
           ---
