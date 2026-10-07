@@ -36,12 +36,11 @@ jobs:
         id: changesets
         uses: changesets/action@v2
         with:
-          publish: pnpm changeset publish
-          version: pnpm changeset version
-          title: "chore: version package"
-          commit: "chore: version package"
+          publish-script: pnpm changeset publish
+          version-script: pnpm changeset version
+          pr-title: "chore: version package"
+          commit-message: "chore: version package"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # npm Trusted Publishing (OIDC): no NPM_TOKEN needed.
           # id-token: write above lets npm exchange the OIDC token automatically.
           # NPM_CONFIG_PROVENANCE adds provenance attestations to published packages.
