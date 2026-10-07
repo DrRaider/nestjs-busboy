@@ -6,6 +6,8 @@ This package replaces `@nest-lab/fastify-multer`, which depends on the unmaintai
 
 ## Installation
 
+Supports NestJS 9 to 12, with the Fastify or Express adapter. On NestJS 12 (ESM-only), use Node >= 20.19 or >= 22.12, as NestJS 12 itself requires.
+
 ```shell
 npm i nestjs-busboy
 yarn add nestjs-busboy

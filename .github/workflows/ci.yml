@@ -15,7 +15,8 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          # Vitest 5 needs Node >= 22.12; NestJS 12 needs >= 20.19.
+          node-version: 24
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
@@ -29,5 +30,22 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Test
+      # Both supported majors, in this one job: `check` is the required status
+      # check. NestJS 12 first (the locked dev dependencies), then 11.
+      - name: Test (NestJS 12)
         run: pnpm test
+
+      - name: Built package (NestJS 12)
+        run: pnpm test:dist
+
+      - name: Switch to NestJS 11
+        run: pnpm add -D @nestjs/common@^11 @nestjs/core@^11 @nestjs/platform-express@^11 @nestjs/platform-fastify@^11 @nestjs/testing@^11
+
+      - name: Typecheck (NestJS 11)
+        run: pnpm tsc --noEmit
+
+      - name: Test (NestJS 11)
+        run: pnpm test
+
+      - name: Built package (NestJS 11)
+        run: pnpm build && pnpm test:dist
