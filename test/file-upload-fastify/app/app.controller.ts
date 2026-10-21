@@ -45,13 +45,15 @@ export class AppController {
   @Post("multiple")
   @UseInterceptors(FilesInterceptor("file", 10, { storage: memoryStorage() }))
   uploadMultipleFiles(@UploadedFiles() files: unknown[]) {
-    return { success: !!files.length, fileCount: files.length };
+    const fileCount = Array.isArray(files) ? files.length : 0;
+    return { success: fileCount > 0, fileCount };
   }
 
   @Post("any")
   @UseInterceptors(AnyFilesInterceptor({ storage: memoryStorage() }))
   uploadAnyFiles(@UploadedFiles() files: unknown[]) {
-    return { success: !!files.length, fileCount: files.length };
+    const fileCount = Array.isArray(files) ? files.length : 0;
+    return { success: fileCount > 0, fileCount };
   }
 
   @Post("fields")
